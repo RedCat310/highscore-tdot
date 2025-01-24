@@ -11,7 +11,6 @@ import './style.css'
 function App() {
     const [santaClausGame, setSantaClausGame] = useState(null);
     const [santaClausGamePlayer, setSantaClausGamePlayer] = useState(0); 
-    const [carGame2, setCarGame2] = useState(null);
     const [carGame1, setCarGame1] = useState(null);
     const [carGame1Player, setCarGame1Player] = useState(0); 
     const [astroidsGame, setAstroidsGame] = useState(null);
@@ -65,15 +64,32 @@ function App() {
     });
   })
 
+  const getRankings = (gameData) => {
+    if(gameData){
+      let rankings = [];
+      let rank = 1;
+      for (let i = 0; i < gameData.length - 1; i++) {
+        if (i > 0 && gameData[i]?.score < gameData[i - 1].score) {
+          rank = i + 1;
+        }
+        rankings.push({ ...gameData[i], rank });
+      }
+      return rankings;
+    }else return gameData
+  };
+
   return (
-    <div className='mt-5' style={{maxWidth: '90%', margin: 'auto'}}>
+    <div className='mt-5' style={{maxWidth: '90%', margin: 'auto', height: '800px'}}>
       <h1 style={{ textAlign: 'center', fontSize: '60px' }}>Highscores</h1>
       <h3 style={{ textAlign: 'center' }} className='mb-5'>Computer-AG -  Tag der Offenen Tür - 07.02.2025</h3>
       <Row data-bs-theme="light">
         <Col>
         <Card>
           <Card.Img variant="top" src="./game-test.jpg" />
-          <Card.Header><h2 style={{ display: 'inline' }}>Santaclaus</h2> <Badge bg="primary" style={{ fontSize: '20px' }}>9</Badge></Card.Header>
+          <Card.Header>
+            <h2 style={{ display: 'inline' }}>Santaclaus</h2>
+            <Badge bg="primary" style={{ fontSize: '20px', float: 'right' }}>{santaClausGamePlayer}</Badge>
+          </Card.Header>
           <Card.Body>
             {/* <h4 className="mb-4">Es { santaClausGamePlayer === 1  ? "hat" : "haben" } { santaClausGamePlayer === 0 ?  "noch keine" : santaClausGamePlayer } Spieler teilgenommen</h4> */}
             <Table  style={{ fontSize: '30px' }}>
@@ -85,11 +101,11 @@ function App() {
                 </tr>
               </thead> */}
               <tbody>
-                { santaClausGame?.map((player, index) => (
+                { getRankings(santaClausGame)?.map((player) => (
                   <tr key={player.id}>
-                    <td className={index < 3 ? 'pulse' : null}>{index + 1}</td>
-                    <td className={index < 3 ? 'pulse' : null}>{player.name}</td>
-                    <td className={index < 3 ? 'pulse' : null}>{player.score}</td>
+                    <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
+                    <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
+                    <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
                   </tr>
                 ))}
               </tbody>
@@ -99,23 +115,19 @@ function App() {
         </Col>
         <Col>
           <Card>
-            <Card.Header><h2>Autospiel</h2></Card.Header>
+            <Card.Img variant="top" src="./game-test.jpg" />
+            <Card.Header>
+              <h2 style={{ display: 'inline' }}>Autospiel</h2>
+              <Badge bg="primary" style={{ fontSize: '20px', float: 'right' }}>{carGame1Player}</Badge>
+            </Card.Header>
             <Card.Body>
-              <h4 className="mb-4">Es { carGame1Player === 1  ? "hat" : "haben" } { carGame1Player === 0 ?  "noch keine" : carGame1Player } Spieler teilgenommen</h4>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Platzierung</th>
-                    <th>Spielername</th>
-                    <th>Punkte</th>
-                  </tr>
-                </thead>
+              <Table style={{ fontSize: '30px' }}>
                 <tbody>
-                  { carGame1?.map((player, index) => (
+                  { getRankings(carGame1)?.map((player) => (
                     <tr key={player.id}>
-                      <td>{index + 1}</td>
-                      <td>{player.name}</td>
-                      <td>{player.score}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -125,23 +137,19 @@ function App() {
         </Col>
         <Col>
           <Card>
-            <Card.Header><h2>Astroids</h2></Card.Header>
+            <Card.Img variant="top" src="./game-test.jpg" />
+            <Card.Header>
+              <h2 style={{ display: 'inline' }}>Astroids</h2>
+              <Badge bg="primary" style={{ fontSize: '20px', float: 'right' }}>{astroidsGamePlayer}</Badge>
+            </Card.Header>
             <Card.Body>
-              <h4 className="mb-4">Es { astroidsGamePlayer === 1  ? "hat" : "haben" } { astroidsGamePlayer === 0 ?  "noch keine" : astroidsGamePlayer } Spieler teilgenommen</h4>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Platzierung</th>
-                    <th>Spielername</th>
-                    <th>Punkte</th>
-                  </tr>
-                </thead>
+              <Table style={{ fontSize: '30px' }}>
                 <tbody>
-                  { astroidsGame?.map((player, index) => (
+                  { getRankings(astroidsGame)?.map((player) => (
                     <tr key={player.id}>
-                      <td>{index + 1}</td>
-                      <td>{player.name}</td>
-                      <td>{player.score}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
+                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
                     </tr>
                   ))}
                 </tbody>
