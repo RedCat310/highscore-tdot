@@ -3,14 +3,15 @@ import ReactDOM from 'react-dom/client';
 import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "./firebase";
-import { Card, Table, Row, Col } from 'react-bootstrap'; // Importiere React-Bootstrap Komponenten
+import { Card, Table, Row, Col, Badge } from 'react-bootstrap'; // Importiere React-Bootstrap Komponenten
+import './style.css'
+
 
 
 function App() {
     const [santaClausGame, setSantaClausGame] = useState(null);
     const [santaClausGamePlayer, setSantaClausGamePlayer] = useState(0); 
     const [carGame2, setCarGame2] = useState(null);
-    const [carGame2Player, setCarGame2Player] = useState(0); 
     const [carGame1, setCarGame1] = useState(null);
     const [carGame1Player, setCarGame1Player] = useState(0); 
     const [astroidsGame, setAstroidsGame] = useState(null);
@@ -31,21 +32,8 @@ function App() {
       }
       setSantaClausGamePlayer(length);
       data.sort((a, b) => b.score - a.score);
+      
       setSantaClausGame(data.slice(0, 10));
-    });
-    onSnapshot(collection(db, "carGame2"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
-      let length = data.length;
-      for (let i = 0; i < data.length; i++) {
-        const el = data[i];
-        if(el.dontUse){
-          delete data[i];
-          length--;
-        }        
-      }
-      setCarGame2Player(length);
-      data.sort((a, b) => b.score - a.score);
-      setCarGame2(data.slice(0, 10));
     });
     onSnapshot(collection(db, "carGame1"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
@@ -79,27 +67,29 @@ function App() {
 
   return (
     <div className='mt-5' style={{maxWidth: '90%', margin: 'auto'}}>
-      <h1 className='m-5'>Tabelle mit den 10 besten Spielern aus der Spielerecke</h1>
-      <Row>
+      <h1 style={{ textAlign: 'center', fontSize: '60px' }}>Highscores</h1>
+      <h3 style={{ textAlign: 'center' }} className='mb-5'>Computer-AG -  Tag der Offenen Tür - 07.02.2025</h3>
+      <Row data-bs-theme="light">
         <Col>
         <Card>
-          <Card.Header><h2>Santaclaus</h2></Card.Header>
+          <Card.Img variant="top" src="./game-test.jpg" />
+          <Card.Header><h2 style={{ display: 'inline' }}>Santaclaus</h2> <Badge bg="primary" style={{ fontSize: '20px' }}>9</Badge></Card.Header>
           <Card.Body>
-            <h4 className="mb-4">Es { santaClausGamePlayer === 1  ? "hat" : "haben" } { santaClausGamePlayer === 0 ?  "noch keine" : santaClausGamePlayer } Spieler teilgenommen</h4>
-            <Table striped bordered hover>
-              <thead>
+            {/* <h4 className="mb-4">Es { santaClausGamePlayer === 1  ? "hat" : "haben" } { santaClausGamePlayer === 0 ?  "noch keine" : santaClausGamePlayer } Spieler teilgenommen</h4> */}
+            <Table  style={{ fontSize: '30px' }}>
+              {/* <thead>
                 <tr>
                   <th>Platzierung</th>
                   <th>Spielername</th>
                   <th>Punkte</th>
                 </tr>
-              </thead>
+              </thead> */}
               <tbody>
                 { santaClausGame?.map((player, index) => (
                   <tr key={player.id}>
-                    <td>{index + 1}</td>
-                    <td>{player.name}</td>
-                    <td>{player.score}</td>
+                    <td className={index < 3 ? 'pulse' : null}>{index + 1}</td>
+                    <td className={index < 3 ? 'pulse' : null}>{player.name}</td>
+                    <td className={index < 3 ? 'pulse' : null}>{player.score}</td>
                   </tr>
                 ))}
               </tbody>
@@ -109,33 +99,7 @@ function App() {
         </Col>
         <Col>
           <Card>
-            <Card.Header><h2>Autospiel Drifting</h2></Card.Header>
-            <Card.Body>
-              <h4 className="mb-4">Es { carGame2Player === 1  ? "hat" : "haben" } { carGame2Player === 0 ?  "noch keine" : carGame2Player } Spieler teilgenommen</h4>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Platzierung</th>
-                    <th>Spielername</th>
-                    <th>Punkte</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  { carGame2?.map((player, index) => (
-                    <tr key={player.id}>
-                      <td>{index + 1}</td>
-                      <td>{player.name}</td>
-                      <td>{player.score}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
-          <Card>
-            <Card.Header><h2>Autospiel Strecke</h2></Card.Header>
+            <Card.Header><h2>Autospiel</h2></Card.Header>
             <Card.Body>
               <h4 className="mb-4">Es { carGame1Player === 1  ? "hat" : "haben" } { carGame1Player === 0 ?  "noch keine" : carGame1Player } Spieler teilgenommen</h4>
               <Table striped bordered hover>
