@@ -19,6 +19,7 @@ function App() {
     const [modalData, setModalData] = useState("");
     const [password, setPassword] = useState("");
     const handleClose = () => setShow(false);
+    const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
@@ -27,7 +28,7 @@ function App() {
       for (let i = 0; i < data.length; i++) {
         const el = data[i];
         if(el.dontUse){
-          delete data[i];
+          data.splice(i, 1);
           length--;
         }        
       }
@@ -42,7 +43,7 @@ function App() {
       for (let i = 0; i < data.length; i++) {
         const el = data[i];
         if(el.dontUse){
-          delete data[i];
+          data.splice(i, 1);
           length--;
         }        
       }
@@ -58,13 +59,21 @@ function App() {
         if(el.dontUse){
           data.splice(i, 1);
           length--
-        }        
+        }
       }
       setAstroidsGamePlayer(length);
       data.sort((a, b) => b.score - a.score);
       setAstroidsGame(data.slice(0, 10));
     });
   })
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    }, 300000); // 300000 ms = 5 minutes
+  
+    return () => clearInterval(interval);
+  }, []);
 
   const clearGame = async (game) => {
     if(game !== "end"){
@@ -73,6 +82,7 @@ function App() {
       return;
     }
     if(password === "Rosti123!"){
+      setLoader(true)
       let rawData = await getDocs(collection(db, modalData))
       let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
       for (let i = 0; i < data.length; i++) {
@@ -84,6 +94,7 @@ function App() {
     }else{
       alert("Falsches Passwort");
     }
+    setLoader(false)
     setShow(false)
     setPassword("")
     setModalData("")
@@ -93,7 +104,7 @@ function App() {
     if(gameData){
       let rankings = [];
       let rank = 1;
-      let arrLength = gameData.length === 10 ? gameData.length : gameData.length - 1
+      let arrLength = gameData.length;
       for (let i = 0; i < arrLength; i++) {
         if (i > 0 && gameData[i]?.score < gameData[i - 1].score) {
           rank = i + 1;
@@ -111,8 +122,12 @@ function App() {
           <Modal.Title>Löschen von "{modalData}" bestätigen</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <FormLabel>Passwort eingeben</FormLabel>
-         <FormControl type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+            { loader ? <div class="loader">
+          <div class="box1"></div>
+          <div class="box2"></div>
+          <div class="box3"></div>
+        </div> : <><FormLabel>Passwort eingeben</FormLabel>
+          <FormControl type='password' value={password} onChange={(e) => setPassword(e.target.value)} /></> }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -128,7 +143,7 @@ function App() {
       <Row data-bs-theme="light">
         <Col>
         <Card style={{ height: '800px' }}>
-          <Card.Img variant="top" src="./game-test.jpg" />
+          <Card.Img variant="top" src="./santaclaus.jpg" />
           <Card.Header>
             <h2 style={{ display: 'inline' }}>Santaclaus</h2>
             <Badge  onClick={() => clearGame("santaClausGame")} bg="primary" style={{ fontSize: '20px', float: 'right' }}>{santaClausGamePlayer}</Badge>
@@ -146,9 +161,9 @@ function App() {
               <tbody>
                 { getRankings(santaClausGame)?.map((player) => (
                   <tr key={player.id}>
-                    {player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '40px' }} /> : null}
-                    {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '40px' }} /> : null}
-                    {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '40px' }} /> : null}
+                    <td>{player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '30px' }} /> : null}</td>
                     <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
                     <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
                     <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
@@ -171,9 +186,9 @@ function App() {
                 <tbody>
                   { getRankings(carGame1)?.map((player) => (
                     <tr key={player.id}>
-                      {player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '40px' }} /> : null}
-                      {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '40px' }} /> : null}
-                      {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '40px' }} /> : null}
+                      <td>{player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '30px' }} /> : null}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
@@ -186,7 +201,7 @@ function App() {
         </Col>
         <Col>
           <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./game-test.jpg" />
+            <Card.Img variant="top" src="./astroids.jpg" />
             <Card.Header>
               <h2 style={{ display: 'inline' }}>Astroids</h2>
               <Badge onClick={() => clearGame("astroidsGame")} bg="primary" style={{ fontSize: '20px', float: 'right' }}>{astroidsGamePlayer}</Badge>
@@ -196,9 +211,9 @@ function App() {
                 <tbody>
                   { getRankings(astroidsGame)?.map((player) => (
                     <tr key={player.id}>
-                      {player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '40px' }} /> : null}
-                      {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '40px' }} /> : null}
-                      {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '40px' }} /> : null}
+                      <td>{player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '30px' }} /> : null}
+                    {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '30px' }} /> : null}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
