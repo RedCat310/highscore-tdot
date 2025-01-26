@@ -72,7 +72,7 @@ function App() {
       setModalData(game)
       return;
     }
-    if(password == "Rosti123!"){
+    if(password === "Rosti123!"){
       let rawData = await getDocs(collection(db, modalData))
       let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
       for (let i = 0; i < data.length; i++) {
@@ -128,7 +128,7 @@ function App() {
       <Row data-bs-theme="light">
         <Col>
         <Card style={{ height: '800px' }}>
-          <Card.Img variant="top" src="./game-test.jpg" style={{ height: '200px', width: '550px' }} />
+          <Card.Img variant="top" src="./game-test.jpg" />
           <Card.Header>
             <h2 style={{ display: 'inline' }}>Santaclaus</h2>
             <Badge  onClick={() => clearGame("santaClausGame")} bg="primary" style={{ fontSize: '20px', float: 'right' }}>{santaClausGamePlayer}</Badge>
@@ -161,7 +161,7 @@ function App() {
         </Col>
         <Col>
           <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./game-test.jpg" style={{ height: '200px', width: '550px' }}/>
+            <Card.Img variant="top" src="./game-test.jpg" />
             <Card.Header>
               <h2 style={{ display: 'inline' }}>Autospiel</h2>
               <Badge onClick={() => clearGame("carGame1")} bg="primary" style={{ fontSize: '20px', float: 'right' }}>{carGame1Player}</Badge>
@@ -186,7 +186,7 @@ function App() {
         </Col>
         <Col>
           <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./game-test.jpg" style={{ height: '200px', width: '550px' }}/>
+            <Card.Img variant="top" src="./game-test.jpg" />
             <Card.Header>
               <h2 style={{ display: 'inline' }}>Astroids</h2>
               <Badge onClick={() => clearGame("astroidsGame")} bg="primary" style={{ fontSize: '20px', float: 'right' }}>{astroidsGamePlayer}</Badge>
