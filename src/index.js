@@ -146,10 +146,10 @@ function App() {
               <tbody>
                 { getRankings(santaClausGame)?.map((player) => (
                   <tr key={player.id}>
-                    {player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '40px' }} /> : null}
+                    {player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '20px' }} /> : null}
                     {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '40px' }} /> : null}
                     {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '40px' }} /> : null}
-                    <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}</td>
+                    <td className={player.rank <= 3 ? 'pulse' : null}>{player.rank}.</td>
                     <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
                     <td className={player.rank <= 3 ? 'pulse' : null}>{player.score}</td>
                   </tr>
