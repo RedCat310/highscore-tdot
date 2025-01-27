@@ -20,13 +20,12 @@ function App() {
     const [password, setPassword] = useState("");
     const handleClose = () => setShow(false);
     const [loader, setLoader] = useState(false);
-    const [deletPlayerId, seturDeletePlayerId] = useState("");
-    const [deletPlayerGame, seturDeletePlayerGame] = useState("");
     const [show2, setShow2] = useState(false);
     const [modalData2, setModalData2] = useState("");
     const [password2, setPassword2] = useState("");
     const handleClose2 = () => setShow2(false);
     const [loader2, setLoader2] = useState(false);
+    const [modal2DataArray, setmodal2DataArray] = useState([]);
 
   useEffect(() => {
     onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
@@ -126,14 +125,14 @@ function App() {
     if(id !== "end"){
       setShow2(true)
       setModalData2('Willst du wirklich Spieler: "' + name + '" mit dem Score von ' + score + ' und der Platzierung von ' + rank + ' löschen?')
-      seturDeletePlayerId(id);
-      seturDeletePlayerGame(game);
-      return;
+      setmodal2DataArray([ id, game ])
+      return
     }
+    console.log(password2);
     if(password2 === "Rosti123!"){
       setLoader2(true)
       try {
-        deleteDoc(doc(db, deletPlayerGame, deletPlayerId))
+        deleteDoc(doc(db, modal2DataArray[1], modal2DataArray[0]))
       } catch (error) {
         console.error(error)
       }
@@ -185,7 +184,7 @@ function App() {
           <Button variant="secondary" onClick={handleClose2}>
             Close
           </Button>
-          <Button variant="danger" onClick={() => clearGame("end")}>
+          <Button variant="danger" onClick={() => deletePlayer("end")}>
             Löschen bestätigen
           </Button>
         </Modal.Footer>
