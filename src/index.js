@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { collection, deleteDoc, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { db } from "./firebase";
 import { Card, Table, Row, Col, Badge, Modal, Button, FormControl, FormLabel } from 'react-bootstrap'; // Importiere React-Bootstrap Komponenten
 import './style.css'
@@ -27,8 +27,7 @@ function App() {
     const [loader2, setLoader2] = useState(false);
     const [modal2DataArray, setmodal2DataArray] = useState([]);
 
-  useEffect(() => {
-    onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
+    const unsub1 = onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
       let length = data.length;
       for (let i = 0; i < data.length; i++) {
@@ -43,7 +42,7 @@ function App() {
       
       setSantaClausGame(data.slice(0, 10));
     });
-    onSnapshot(collection(db, "carGame1"), (snapshot) => {
+    const unsub2 = onSnapshot(collection(db, "carGame1"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
       let length = data.length;
       for (let i = 0; i < data.length; i++) {
@@ -57,7 +56,7 @@ function App() {
       data.sort((a, b) => b.score - a.score);
       setCarGame1(data.slice(0, 10));
     });
-    onSnapshot(collection(db, "astroidsGame"), (snapshot) => {
+    const unsub3 = onSnapshot(collection(db, "astroidsGame"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
       let length = data.length;
       for (let i = 0; i < data.length; i++) {
@@ -71,15 +70,6 @@ function App() {
       data.sort((a, b) => b.score - a.score);
       setAstroidsGame(data.slice(0, 10));
     });
-  })
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      window.location.reload();
-    }, 300000); // 300000 ms = 5 minutes
-  
-    return () => clearInterval(interval);
-  }, []);
 
   const clearGame = async (game) => {
     if(game !== "end"){
