@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { collection, deleteDoc, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
 import { useState } from "react";
@@ -27,6 +27,7 @@ function App() {
     const [loader2, setLoader2] = useState(false);
     const [modal2DataArray, setmodal2DataArray] = useState([]);
 
+  useEffect(() => {
     const unsub1 = onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
       let length = data.length;
@@ -70,31 +71,37 @@ function App() {
       data.sort((a, b) => b.score - a.score);
       setAstroidsGame(data.slice(0, 10));
     });
+    return () => {
+      unsub1();
+      unsub2();
+      unsub3();
+    }
+  }, []);
 
   const clearGame = async (game) => {
     if(game !== "end"){
-      setShow(true)
-      setModalData(game)
+      setShow(true);
+      setModalData(game);
       return;
     }
     if(password === "Rosti123!"){
-      setLoader(true)
-      let rawData = await getDocs(collection(db, modalData))
-      let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      setLoader(true);
+      let rawData = await getDocs(collection(db, modalData));
+      let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       for (let i = 0; i < data.length; i++) {
-        await deleteDoc(doc(db, modalData, data[i].id))
+        await deleteDoc(doc(db, modalData, data[i].id));
       }
       await setDoc(doc(db, modalData, "example"), {
         dontUse: true,
-      })
-    }else{
+      });
+    } else {
       alert("Falsches Passwort");
     }
-    setLoader(false)
-    setShow(false)
-    setPassword("")
-    setModalData("")
-  }
+    setLoader(false);
+    setShow(false);
+    setPassword("");
+    setModalData("");
+  };
 
   const getRankings = (gameData) => {
     if(gameData){
@@ -153,7 +160,7 @@ function App() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={() => deletePlayer("end")}>
+          <Button variant="danger" onClick={() => clearGame("end")}>
             Löschen bestätigen
           </Button>
         </Modal.Footer>
