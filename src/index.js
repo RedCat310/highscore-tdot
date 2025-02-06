@@ -224,7 +224,7 @@ function App() {
         </Col>
         <Col>
           <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./game-test.jpg" />
+            <Card.Img variant="top" src="./cargame.png" />
             <Card.Header>
               <h2 style={{ display: 'inline' }}>Autospiel</h2>
               <Badge onClick={() => clearGame("carGame1")} bg="primary" style={{ fontSize: '15px', float: 'right' }}>{carGame1Player}</Badge>
