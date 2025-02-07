@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { collection, deleteDoc, doc, getDocs, onSnapshot, setDoc } from "firebase/firestore";
 import { useState } from "react";
@@ -25,6 +25,7 @@ function App() {
     const [loader2, setLoader2] = useState(false);
     const [modal2DataArray, setmodal2DataArray] = useState([]);
 
+  useEffect(() => {
     const unsub1 = onSnapshot(collection(db, "santaClausGame"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
       let length = data.length;
@@ -57,28 +58,28 @@ function App() {
 
   const clearGame = async (game) => {
     if(game !== "end"){
-      setShow(true)
-      setModalData(game)
+      setShow(true);
+      setModalData(game);
       return;
     }
     if(password === "Rosti123!"){
-      setLoader(true)
-      let rawData = await getDocs(collection(db, modalData))
-      let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      setLoader(true);
+      let rawData = await getDocs(collection(db, modalData));
+      let data = rawData.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       for (let i = 0; i < data.length; i++) {
-        await deleteDoc(doc(db, modalData, data[i].id))
+        await deleteDoc(doc(db, modalData, data[i].id));
       }
       await setDoc(doc(db, modalData, "example"), {
         dontUse: true,
-      })
-    }else{
+      });
+    } else {
       alert("Falsches Passwort");
     }
-    setLoader(false)
-    setShow(false)
-    setPassword("")
-    setModalData("")
-  }
+    setLoader(false);
+    setShow(false);
+    setPassword("");
+    setModalData("");
+  };
 
   const getRankings = (gameData, anton) => {
     if(gameData){
@@ -151,7 +152,7 @@ function App() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={() => deletePlayer("end")}>
+          <Button variant="danger" onClick={() => clearGame("end")}>
             Löschen bestätigen
           </Button>
         </Modal.Footer>
@@ -215,9 +216,9 @@ function App() {
         </Col>
         <Col>
           <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./game-test.jpg" />
+            <Card.Img variant="top" src="./cargame.png" />
             <Card.Header>
-              <h2 style={{ display: 'inline' }}>Autospiel</h2>
+              <h2 style={{ display: 'inline' }}>JrRacing</h2>
               <Badge onClick={() => clearGame("carGame1")} bg="primary" style={{ fontSize: '15px', float: 'right' }}>{carGame1Player}</Badge>
             </Card.Header>
             <Card.Body>
