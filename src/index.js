@@ -56,6 +56,13 @@ function App() {
       setCarGame1(data.slice(0, 10));
     });
 
+    // Cleanup function to unsubscribe from onSnapshot
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, []);
+
   const clearGame = async (game) => {
     if(game !== "end"){
       setShow(true);
