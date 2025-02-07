@@ -13,8 +13,6 @@ function App() {
     const [santaClausGamePlayer, setSantaClausGamePlayer] = useState(0); 
     const [carGame1, setCarGame1] = useState(null);
     const [carGame1Player, setCarGame1Player] = useState(0); 
-    const [astroidsGame, setAstroidsGame] = useState(null);
-    const [astroidsGamePlayer, setAstroidsGamePlayer] = useState(0); 
     const [show, setShow] = useState(false);
     const [modalData, setModalData] = useState("");
     const [password, setPassword] = useState("");
@@ -53,22 +51,8 @@ function App() {
         }        
       }
       setCarGame1Player(length);
-      data.sort((a, b) => b.score - a.score);
+      data.sort((a, b) => a.score - b.score);
       setCarGame1(data.slice(0, 10));
-    });
-    const unsub3 = onSnapshot(collection(db, "astroidsGame"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ ...doc.data() , id: doc.id }));
-      let length = data.length;
-      for (let i = 0; i < data.length; i++) {
-        const el = data[i];
-        if(el.dontUse){
-          data.splice(i, 1);
-          length--
-        }
-      }
-      setAstroidsGamePlayer(length);
-      data.sort((a, b) => b.score - a.score);
-      setAstroidsGame(data.slice(0, 10));
     });
 
   const clearGame = async (game) => {
@@ -96,18 +80,32 @@ function App() {
     setModalData("")
   }
 
-  const getRankings = (gameData) => {
+  const getRankings = (gameData, anton) => {
     if(gameData){
-      let rankings = [];
-      let rank = 1;
-      let arrLength = gameData.length;
-      for (let i = 0; i < arrLength; i++) {
-        if (i > 0 && gameData[i]?.score < gameData[i - 1].score) {
-          rank = i + 1;
+      if(!anton){
+        let rankings = [];
+        let rank = 1;
+        let arrLength = gameData.length;
+        for (let i = 0; i < arrLength; i++) {
+          if (i > 0 && gameData[i]?.score < gameData[i - 1].score) {
+            rank = i + 1;
+          }
+          rankings.push({ ...gameData[i], rank });
         }
-        rankings.push({ ...gameData[i], rank });
+        return rankings;
+      } else{
+        // hier umgekehrte version einfügen
+        let rankings = [];
+        let rank = 1;
+        let arrLength = gameData.length;
+        for (let i = 0; i < arrLength; i++) {
+          if (i > 0 && gameData[i]?.score > gameData[i - 1].score) {
+            rank = i + 1;
+          }
+          rankings.push({ ...gameData[i], rank });
+        }
+        return rankings;
       }
-      return rankings;
     }else return gameData
   };
 
@@ -225,14 +223,14 @@ function App() {
             <Card.Body>
               <Table style={{ fontSize: '20px' }}>
                 <tbody>
-                  { getRankings(carGame1)?.map((player) => (
+                  { getRankings(carGame1, true)?.map((player) => (
                     <tr onClick={() => deletePlayer(player.id, 'carGame1', player.name, player.rank, player.score)} key={player.id}>
                       <td>{player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '20px' }} /> : null}
                     {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '20px' }} /> : null}
                     {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '20px' }} /> : null}</td>
                       <td className={player.rank <= 3 ? 'pulse text-end' : 'text-end'}>{player.rank}.</td>
                       <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
-                      <td className={player.rank <= 3 ? 'pulse text-end' : 'text-end'}>{player.score}</td>
+                      <td className={player.rank <= 3 ? 'pulse text-end' : 'text-end'}>{player.score}min</td>
                     </tr>
                   ))}
                 </tbody>
@@ -240,31 +238,7 @@ function App() {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
-          <Card style={{ height: '800px' }}>
-            <Card.Img variant="top" src="./astroids.jpg" />
-            <Card.Header>
-              <h2 style={{ display: 'inline' }}>Astroids</h2>
-              <Badge onClick={() => clearGame("astroidsGame")} bg="primary" style={{ fontSize: '15px', float: 'right' }}>{astroidsGamePlayer}</Badge>
-            </Card.Header>
-            <Card.Body>
-              <Table style={{ fontSize: '20px' }}>
-                <tbody>
-                  { getRankings(astroidsGame)?.map((player) => (
-                    <tr onClick={() => deletePlayer(player.id, 'astroidsGame', player.name, player.rank, player.score)} key={player.id}>
-                      <td>{player.rank === 1 ? <img alt='' src='./gold.png' style={{ width: '20px' }} /> : null}
-                    {player.rank === 2 ? <img alt='' src='./silber.png' style={{ width: '20px' }} /> : null}
-                    {player.rank === 3 ? <img alt='' src='./bronze.png' style={{ width: '20px' }} /> : null}</td>
-                      <td className={player.rank <= 3 ? 'pulse text-end' : 'text-end'}>{player.rank}.</td>
-                      <td className={player.rank <= 3 ? 'pulse' : null}>{player.name}</td>
-                      <td className={player.rank <= 3 ? 'pulse text-end' : 'text-end'}>{player.score}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Col>
+        
       </Row>
       <footer className="page-footer font-small blue pt-4">
         <div className="footer-copyright text-center py-3">Erstellt von Luis Klembt, 9c</div>
